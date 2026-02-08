@@ -8,6 +8,7 @@ public class Enemy {
     private int health = 100;
     private double speed = 1.5;
     private int pathIndex = 0;
+    private static final int SIZE = 100;
 
     // constructor with default to watch the first point on the path
     public Enemy(Path path) {
@@ -62,6 +63,6 @@ public class Enemy {
     // draw the enemy
     public void draw(Graphics g) {
         g.setColor(Color.RED);
-        g.fillOval((int) x - 10, (int) y - 10, 20, 20);
+        g.fillRect((int) x - SIZE / 2, (int) y - SIZE / 2, SIZE, SIZE);
     }
 }
