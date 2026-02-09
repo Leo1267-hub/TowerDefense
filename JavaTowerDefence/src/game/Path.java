@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Path {
 
     private ArrayList<Point> points = new ArrayList<>();
-    private static final int TILE_SIZE = 64;
+    public static final int TILE_SIZE = 64;
 
     public Path() {
         // initialize the path with some points

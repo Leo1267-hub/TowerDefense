@@ -78,7 +78,7 @@ public class GameState {
 
         // draw the path
         path.draw(g);
-
+        level.draw(g);
         for (Enemy e : enemies)
             e.draw(g);
         for (Tower t : towers)

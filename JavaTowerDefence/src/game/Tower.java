@@ -8,14 +8,17 @@ public class Tower {
     // position of the tower
     private int x, y;
     // range of the tower
-    private int range = 120;
+    private int range = 200;
     // track time until the next shot can be fired
     private int cooldown = 0;
+    private static final int WIDTH = 128;
+    private static final int HEIGHT = 64;
 
     // constructor to create a tower at a specific position
     public Tower(int x, int y) {
         this.x = x;
         this.y = y;
+
     }
 
     // updates the tower once per frame
@@ -46,6 +49,6 @@ public class Tower {
     // draw the tower
     public void draw(Graphics g) {
         g.setColor(Color.BLUE);
-        g.fillRect(x - 10, y - 10, 20, 20);
+        g.fillRect(x - WIDTH / 2, y - HEIGHT / 2, WIDTH, HEIGHT);
     }
 }

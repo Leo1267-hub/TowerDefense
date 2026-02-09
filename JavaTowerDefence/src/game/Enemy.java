@@ -62,7 +62,10 @@ public class Enemy {
 
     // draw the enemy
     public void draw(Graphics g) {
-        g.setColor(Color.RED);
+
+        Color c = new Color(1f, 0f, 0f, .5f);
+
+        g.setColor(c);
         g.fillRect((int) x - SIZE / 2, (int) y - SIZE / 2, SIZE, SIZE);
     }
 }
