@@ -14,7 +14,7 @@ public class Projectile {
     private double x, y;
     private Enemy target;
     private boolean alive = true;
-    private double speed = 4;
+    private double speed = 10.0;
 
     // creates a new projectile from tower position and target enemy
     public Projectile(int x, int y, Enemy target) {
@@ -36,10 +36,9 @@ public class Projectile {
         double dy = target.getY() - y;
         double dist = Math.sqrt(dx * dx + dy * dy);
 
-        // if the distance is close enough, hit the target else move toward it
-        if (dist < speed) {
-            target.damage(25);
-            alive = false;
+        if (collide(target, this)) {
+            target.damage(25); // deal 25 damage to the enemy
+            alive = false; // remove the projectile
         } else {
             // moves the projectile toward the target
             // converts the dx and dy into a unit vector and then multiplies by speed
@@ -57,5 +56,16 @@ public class Projectile {
     public void draw(Graphics g) {
         g.setColor(Color.YELLOW);
         g.fillOval((int) x - 4, (int) y - 4, 8, 8);
+    }
+
+    public boolean collide(Enemy e, Projectile p) {
+        double half = Enemy.SIZE / 2;
+        if (e.getX() - half < p.x &&
+                e.getX() + half > p.x &&
+                e.getY() - half < p.y &&
+                e.getY() + half > p.y) {
+            return true;
+        }
+        return false;
     }
 }
