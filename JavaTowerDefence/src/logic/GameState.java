@@ -89,9 +89,19 @@ public class GameState {
 
     // INPUT HANDLING
 
-    // places a new tower at the specified coordinates
+    // places a new tower at the specified coordinates if on a valid tile
     public void placeTower(int x, int y) {
-        towers.add(new Tower(x, y));
+        // Convert pixel coordinates to tile coordinates
+        int tileX = x / Path.TILE_SIZE;
+        int tileY = y / Path.TILE_SIZE;
+
+        // Check if tower can be placed on this tile
+        if (Level.canPlaceTower(tileX, tileY)) {
+            // Snap tower position to center of the tile
+            int centerX = tileX * Path.TILE_SIZE + Path.TILE_SIZE;
+            int centerY = tileY * Path.TILE_SIZE + Path.TILE_SIZE / 2;
+            towers.add(new Tower(centerX, centerY));
+        }
     }
 
 }

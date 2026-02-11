@@ -58,6 +58,7 @@ public class Projectile {
         g.fillOval((int) x - 4, (int) y - 4, 8, 8);
     }
 
+    // checking id the bullet inside the enemy hitbox
     public boolean collide(Enemy e, Projectile p) {
         double half = Enemy.SIZE / 2;
         if (e.getX() - half < p.x &&

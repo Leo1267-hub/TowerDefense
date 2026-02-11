@@ -39,13 +39,20 @@ public class Level {
     }
 
     // Check if a tower can be placed at the given tile coordinates
-    // public static boolean canPlaceTower(int tileX, int tileY) {
-    // if (tileY < 0 || tileY >= TOWER_TILES.length ||
-    // tileX < 0 || tileX >= TOWER_TILES[0].length) {
-    // return false;
-    // }
-    // return TOWER_TILES[tileY][tileX] == 14;
-    // }
+    public static boolean canPlaceTower(int tileX, int tileY) {
+        // check if it in bounds of the TOWER_TILES array
+        if (tileY < 0 ||
+                tileY >= TOWER_TILES.length ||
+                tileX < 0 ||
+                tileX >= TOWER_TILES[0].length) {
+            return false;
+        }
+        if (TOWER_TILES[tileY][tileX] != 14) {
+            return false;
+        }
+        TOWER_TILES[tileY][tileX] = 1; // mark tile as occupied
+        return true;
+    }
 
     public void draw(Graphics g) {
         Color c = new Color(1f, 1f, 1f, .15f);
