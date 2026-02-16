@@ -44,14 +44,13 @@ public class Level {
         if (tileY < 0 ||
                 tileY >= TOWER_TILES.length ||
                 tileX < 0 ||
-                tileX >= TOWER_TILES[0].length) {
-            return false;
-        }
-        if (TOWER_TILES[tileY][tileX] != 14) {
+                tileX >= TOWER_TILES[0].length ||
+                TOWER_TILES[tileY][tileX] != 14) {
             return false;
         }
         TOWER_TILES[tileY][tileX] = 1; // mark tile as occupied
         return true;
+
     }
 
     public void draw(Graphics g) {
