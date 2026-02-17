@@ -2,9 +2,7 @@ package game;
 
 import java.awt.*;
 
-// bullet or projectile class
 public class Projectile {
-
     // each projectile has:
     // target 1 enemy
     // moves independently toward that enemy

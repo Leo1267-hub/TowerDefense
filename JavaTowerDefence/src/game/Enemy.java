@@ -62,6 +62,12 @@ public class Enemy {
 
     // draw the enemy
     public void draw(Graphics g) {
+        g.setColor(Color.RED);
+        g.fillRect((int) x - SIZE / 2, (int) y - SIZE / 2, SIZE, SIZE);
+        drawHealthBar(g);
+    }
+
+    public void drawHealthBar(Graphics g) {
         // draw the health bar above the enemy
         g.setColor(Color.GREEN);
         g.fillRect((int) x - SIZE / 2, (int) (y - SIZE / 2) - 20, SIZE, 10);
@@ -69,7 +75,5 @@ public class Enemy {
         // health
         g.setColor(Color.RED);
         g.fillRect((int) x - SIZE / 2, (int) (y - SIZE / 2) - 20, (int) (health / 100.0 * SIZE), 10);
-
-        g.fillRect((int) x - SIZE / 2, (int) y - SIZE / 2, SIZE, SIZE);
     }
 }
