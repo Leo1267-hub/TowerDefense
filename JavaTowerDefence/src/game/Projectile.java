@@ -2,6 +2,8 @@ package game;
 
 import java.awt.*;
 
+import utilz.LoadSave;
+
 public class Projectile {
     // each projectile has:
     // target 1 enemy
@@ -52,8 +54,9 @@ public class Projectile {
 
     // draws the projectile on the screen
     public void draw(Graphics g) {
-        g.setColor(Color.YELLOW);
-        g.fillOval((int) x - 4, (int) y - 4, 8, 8);
+        // g.setColor(Color.YELLOW);
+        // g.fillOval((int) x - 4, (int) y - 4, 8, 8);
+        g.drawImage(LoadSave.getSpriteAtlas(LoadSave.PROJECTILE), (int) x - 4, (int) y - 4, 15, 15, null);
     }
 
     // checking id the bullet inside the enemy hitbox
