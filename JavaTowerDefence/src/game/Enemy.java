@@ -1,6 +1,9 @@
 package game;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+
+import utilz.LoadSave;
 
 public class Enemy {
 
@@ -9,6 +12,11 @@ public class Enemy {
     private double speed = 1.5;
     private int pathIndex = 0;
     public static final int SIZE = 100;
+    private static final int frame_width = 106;
+    private static final int frame_height = 79;
+    public final BufferedImage[] ORC_SPRITES = loadOrcSprites();
+
+    private int animationTimer, currentFrame, ANIMATION_SPEED = 10;
 
     // constructor with default to watch the first point on the path
     public Enemy(Path path) {
@@ -37,6 +45,7 @@ public class Enemy {
             x += dx / dist * speed;
             y += dy / dist * speed;
         }
+        updateAnimation();
     }
 
     // decrease the health of the enemy by a certain amount of damage
@@ -62,9 +71,11 @@ public class Enemy {
 
     // draw the enemy
     public void draw(Graphics g) {
-        g.setColor(Color.RED);
-        g.fillRect((int) x - SIZE / 2, (int) y - SIZE / 2, SIZE, SIZE);
+        // g.setColor(Color.RED);
+        // g.fillRect((int) x - SIZE / 2, (int) y - SIZE / 2, SIZE, SIZE);
         drawHealthBar(g);
+
+        g.drawImage(ORC_SPRITES[currentFrame], (int) x - SIZE / 2, (int) y - SIZE / 2, SIZE, SIZE, null);
     }
 
     public void drawHealthBar(Graphics g) {
@@ -76,4 +87,24 @@ public class Enemy {
         g.setColor(Color.RED);
         g.fillRect((int) x - SIZE / 2, (int) (y - SIZE / 2) - 20, (int) (health / 100.0 * SIZE), 10);
     }
+
+    private BufferedImage[] loadOrcSprites() {
+        BufferedImage[] sprites = new BufferedImage[7];
+        for (int i = 0; i < 7; i++) {
+            sprites[i] = LoadSave.getSpriteAtlas(LoadSave.ORC).getSubimage(i * frame_width, 0, frame_width,
+                    frame_height);
+        }
+        return sprites;
+    }
+
+    private void updateAnimation() {
+        // increment the animation timer and update the current frame of the enemy's
+        // animation
+        animationTimer++;
+        if (animationTimer >= ANIMATION_SPEED) {
+            animationTimer = 0;
+            currentFrame = (currentFrame + 1) % ORC_SPRITES.length;
+        }
+    }
+
 }
