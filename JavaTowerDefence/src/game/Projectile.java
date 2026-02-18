@@ -38,6 +38,7 @@ public class Projectile {
 
         if (collide(target, this)) {
             target.damage(25); // deal 25 damage to the enemy
+
             alive = false; // remove the projectile
         } else {
             // moves the projectile toward the target
@@ -56,7 +57,7 @@ public class Projectile {
     public void draw(Graphics g) {
         // g.setColor(Color.YELLOW);
         // g.fillOval((int) x - 4, (int) y - 4, 8, 8);
-        g.drawImage(LoadSave.getSpriteAtlas(LoadSave.PROJECTILE), (int) x - 4, (int) y - 4, 15, 15, null);
+        g.drawImage(LoadSave.getSpriteAtlas(LoadSave.PROJECTILE), (int) x - 4, (int) y - 4, 32, 26, null);
     }
 
     // checking id the bullet inside the enemy hitbox
@@ -70,4 +71,5 @@ public class Projectile {
         }
         return false;
     }
+
 }

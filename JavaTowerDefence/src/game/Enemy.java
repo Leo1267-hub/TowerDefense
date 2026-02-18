@@ -14,7 +14,8 @@ public class Enemy {
     public static final int SIZE = 100;
     private static final int frame_width = 106;
     private static final int frame_height = 79;
-    public final BufferedImage[] ORC_SPRITES = loadOrcSprites();
+    public final BufferedImage[] ORC_SPRITES = LoadSave.loadOrcSprites(frame_width, frame_height, 7,
+            LoadSave.ORC);
 
     private int animationTimer, currentFrame, ANIMATION_SPEED = 10;
 
@@ -45,7 +46,9 @@ public class Enemy {
             x += dx / dist * speed;
             y += dy / dist * speed;
         }
-        updateAnimation();
+        int[] result = LoadSave.updateAnimation(animationTimer, ANIMATION_SPEED, currentFrame, ORC_SPRITES);
+        currentFrame = result[0];
+        animationTimer = result[1];
     }
 
     // decrease the health of the enemy by a certain amount of damage
@@ -88,23 +91,24 @@ public class Enemy {
         g.fillRect((int) x - SIZE / 2, (int) (y - SIZE / 2) - 20, (int) (health / 100.0 * SIZE), 10);
     }
 
-    private BufferedImage[] loadOrcSprites() {
-        BufferedImage[] sprites = new BufferedImage[7];
-        for (int i = 0; i < 7; i++) {
-            sprites[i] = LoadSave.getSpriteAtlas(LoadSave.ORC).getSubimage(i * frame_width, 0, frame_width,
-                    frame_height);
-        }
-        return sprites;
-    }
+    // private BufferedImage[] loadOrcSprites() {
+    // BufferedImage[] sprites = new BufferedImage[7];
+    // for (int i = 0; i < 7; i++) {
+    // sprites[i] = LoadSave.getSpriteAtlas(LoadSave.ORC).getSubimage(i *
+    // frame_width, 0, frame_width,
+    // frame_height);
+    // }
+    // return sprites;
+    // }
 
-    private void updateAnimation() {
-        // increment the animation timer and update the current frame of the enemy's
-        // animation
-        animationTimer++;
-        if (animationTimer >= ANIMATION_SPEED) {
-            animationTimer = 0;
-            currentFrame = (currentFrame + 1) % ORC_SPRITES.length;
-        }
-    }
+    // private void updateAnimation() {
+    // // increment the animation timer and update the current frame of the enemy's
+    // // animation
+    // animationTimer++;
+    // if (animationTimer >= ANIMATION_SPEED) {
+    // animationTimer = 0;
+    // currentFrame = (currentFrame + 1) % ORC_SPRITES.length;
+    // }
+    // }
 
 }
