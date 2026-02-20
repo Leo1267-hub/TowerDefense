@@ -23,7 +23,7 @@ public class LoadSave {
         return img;
     }
 
-    public static BufferedImage[] loadOrcSprites(int frame_width, int frame_height, int num_frames, String fileName) {
+    public static BufferedImage[] loadSprites(int frame_width, int frame_height, int num_frames, String fileName) {
         BufferedImage[] sprites = new BufferedImage[num_frames];
         for (int i = 0; i < num_frames; i++) {
             sprites[i] = LoadSave.getSpriteAtlas(fileName).getSubimage(i * frame_width, 0, frame_width,

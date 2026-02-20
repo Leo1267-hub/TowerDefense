@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 import utilz.LoadSave;
 
@@ -15,6 +16,17 @@ public class Projectile {
     private Enemy target;
     private boolean alive = true;
     private double speed = 10.0;
+
+    private static final int frame_width = 32;
+    private static final int frame_height = 26;
+
+    private static final int DAMAGE = 25;
+
+    private static final int explosion_frame_width = 78;
+    private static final int explosion_frame_height = 84;
+    public final BufferedImage[] EXPLOSION_SPRITES = LoadSave.loadSprites(explosion_frame_width,
+            explosion_frame_height, 4, LoadSave.EXPLOSION);
+    private int animationTimer, currentFrame, ANIMATION_SPEED = 10;
 
     // creates a new projectile from tower position and target enemy
     public Projectile(int x, int y, Enemy target) {
@@ -37,7 +49,7 @@ public class Projectile {
         double dist = Math.sqrt(dx * dx + dy * dy);
 
         if (collide(target, this)) {
-            target.damage(25); // deal 25 damage to the enemy
+            target.damage(DAMAGE); // deal damage to the enemy
 
             alive = false; // remove the projectile
         } else {
@@ -57,7 +69,8 @@ public class Projectile {
     public void draw(Graphics g) {
         // g.setColor(Color.YELLOW);
         // g.fillOval((int) x - 4, (int) y - 4, 8, 8);
-        g.drawImage(LoadSave.getSpriteAtlas(LoadSave.PROJECTILE), (int) x - 4, (int) y - 4, 32, 26, null);
+        g.drawImage(LoadSave.getSpriteAtlas(LoadSave.PROJECTILE), (int) x - 4, (int) y - 4, frame_width, frame_height,
+                null);
     }
 
     // checking id the bullet inside the enemy hitbox

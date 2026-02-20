@@ -14,7 +14,7 @@ public class Enemy {
     public static final int SIZE = 100;
     private static final int frame_width = 106;
     private static final int frame_height = 79;
-    public final BufferedImage[] ORC_SPRITES = LoadSave.loadOrcSprites(frame_width, frame_height, 7,
+    public final BufferedImage[] ORC_SPRITES = LoadSave.loadSprites(frame_width, frame_height, 7,
             LoadSave.ORC);
 
     private int animationTimer, currentFrame, ANIMATION_SPEED = 10;
