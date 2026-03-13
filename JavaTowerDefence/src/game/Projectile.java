@@ -24,7 +24,7 @@ public class Projectile {
 
     private static final int explosion_frame_width = 78;
     private static final int explosion_frame_height = 84;
-    public final BufferedImage[] EXPLOSION_SPRITES = LoadSave.loadSprites(explosion_frame_width,
+    private final BufferedImage[] EXPLOSION_SPRITES = LoadSave.loadSprites(explosion_frame_width,
             explosion_frame_height, 4, LoadSave.EXPLOSION);
     private int animationTimer = 0, currentFrame = 0, ANIMATION_SPEED = 5;
 
