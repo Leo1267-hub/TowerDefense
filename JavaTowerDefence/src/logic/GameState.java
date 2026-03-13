@@ -10,6 +10,12 @@ import java.util.ArrayList;
 
 public class GameState {
 
+    private static final int MAX_HEALTH = 100;
+    private static final int STARTING_MONEY = 200;
+    private static final int TOWER_COST = 50;
+    private static final int ENEMY_KILL_REWARD = 15;
+    private static final int ENEMY_ESCAPE_DAMAGE = 10;
+
     private ArrayList<Enemy> enemies;
     private ArrayList<Tower> towers;
     private ArrayList<Projectile> projectiles;
@@ -17,6 +23,15 @@ public class GameState {
     private Path path;
     private Level level;
     private BufferedImage mapImage;
+    private int health;
+    private int money;
+
+    private int panelWidth = 280;
+    private int panelHeight = 110;
+    private int margin = 20;
+    private int panelX = GamePanel.WIDTH - panelWidth - margin;
+    private int panelY = margin;
+    private int moneyPopupTimer = 0;
 
     public GameState() {
 
@@ -45,6 +60,9 @@ public class GameState {
         // Creates the level logic
         // How enemies spawn
         level = new Level();
+
+        health = MAX_HEALTH;
+        money = STARTING_MONEY;
     }
 
     // updates the entire game state
@@ -64,8 +82,26 @@ public class GameState {
         for (Projectile p : projectiles)
             p.update();
 
-        // remove dead enemies and inactive projectiles
-        enemies.removeIf(e -> e.isDead());
+        // Handle dead/escaped enemies and update player stats.
+        ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
+        for (Enemy e : enemies) {
+            if (e.isDead()) {
+                money += ENEMY_KILL_REWARD;
+                enemiesToRemove.add(e);
+                moneyPopupTimer = 45;
+
+            } else if (e.hasEscaped()) {
+                health = Math.max(0, health - ENEMY_ESCAPE_DAMAGE);
+                enemiesToRemove.add(e);
+            }
+        }
+        enemies.removeAll(enemiesToRemove);
+
+        if (moneyPopupTimer > 0) {
+            moneyPopupTimer--;
+        }
+
+        // remove inactive projectiles
         projectiles.removeIf(p -> !p.isAlive());
     }
 
@@ -85,12 +121,50 @@ public class GameState {
             t.draw(g);
         for (Projectile p : projectiles)
             p.draw(g);
+
+        drawHud((Graphics2D) g);
+    }
+
+    private void drawHud(Graphics2D g2d) {
+
+        g2d.setColor(new Color(0, 0, 0, 160));
+        g2d.fillRoundRect(panelX, panelY, panelWidth, panelHeight, 18, 18);
+
+        g2d.setColor(new Color(240, 240, 240));
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 20));
+        g2d.drawString("Money: $" + money, panelX + 16, panelY + 34);
+
+        int barX = panelX + 16;
+        int barY = panelY + 56;
+        int barWidth = panelWidth - 32;
+        int barHeight = 24;
+
+        g2d.setColor(new Color(70, 70, 70));
+        g2d.fillRoundRect(barX, barY, barWidth, barHeight, 12, 12);
+
+        int healthWidth = (int) ((health / (double) MAX_HEALTH) * barWidth);
+        g2d.setColor(new Color(54, 196, 95));
+        g2d.fillRoundRect(barX, barY, healthWidth, barHeight, 12, 12);
+
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 16));
+        g2d.drawString("Health: " + health + "/" + MAX_HEALTH, barX + 8, barY + 18);
+
+        if (moneyPopupTimer > 0) {
+            g2d.setColor(new Color(140, 255, 140));
+            g2d.setFont(new Font("SansSerif", Font.BOLD, 18));
+            g2d.drawString("+" + ENEMY_KILL_REWARD + "$", panelX + 150, panelY + 34);
+        }
     }
 
     // INPUT HANDLING
 
     // places a new tower at the specified coordinates if on a valid tile
     public void placeTower(int x, int y) {
+        if (money < TOWER_COST) {
+            return;
+        }
+
         // Convert pixel coordinates to tile coordinates
         int tileX = x / Path.TILE_SIZE;
         int tileY = y / Path.TILE_SIZE;
@@ -101,6 +175,7 @@ public class GameState {
             int centerX = tileX * Path.TILE_SIZE + Path.TILE_SIZE;
             int centerY = tileY * Path.TILE_SIZE + Path.TILE_SIZE / 2;
             towers.add(new Tower(centerX, centerY));
+            money -= TOWER_COST;
         }
     }
 

@@ -11,6 +11,7 @@ public class Enemy {
     private int health = 100;
     private double speed = 1.5;
     private int pathIndex = 0;
+    private boolean escaped = false;
     public static final int SIZE = 100;
     private static final int frame_width = 106;
     private static final int frame_height = 79;
@@ -28,8 +29,10 @@ public class Enemy {
     // update movement of the enemy along the path
     public void update(Path path) {
         // once the enemy reaches the end of the path, it should stop moving
-        if (pathIndex >= path.length())
+        if (pathIndex >= path.length()) {
+            escaped = true;
             return;
+        }
 
         // otherwise it should move towards the next point on the path
         Point target = path.getPoint(pathIndex);
@@ -41,6 +44,9 @@ public class Enemy {
         // the path
         if (dist < speed) {
             pathIndex++;
+            if (pathIndex >= path.length()) {
+                escaped = true;
+            }
         } else {
             // otherwise it should move towards the target point at a constant speed
             x += dx / dist * speed;
@@ -60,6 +66,10 @@ public class Enemy {
     // removed from the game
     public boolean isDead() {
         return health <= 0;
+    }
+
+    public boolean hasEscaped() {
+        return escaped;
     }
 
     // get x position of the enemy ( centre)
@@ -83,11 +93,11 @@ public class Enemy {
 
     public void drawHealthBar(Graphics g) {
         // draw the health bar above the enemy
-        g.setColor(Color.GREEN);
+        g.setColor(Color.red);
         g.fillRect((int) x - SIZE / 2, (int) (y - SIZE / 2) - 20, SIZE, 10);
         // draw another red rectangle on top of the green one to show the remaining
         // health
-        g.setColor(Color.RED);
+        g.setColor(Color.green);
         g.fillRect((int) x - SIZE / 2, (int) (y - SIZE / 2) - 20, (int) (health / 100.0 * SIZE), 10);
     }
 
