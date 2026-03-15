@@ -32,6 +32,9 @@ public class GameState {
     private int panelX = GamePanel.WIDTH - panelWidth - margin;
     private int panelY = margin;
     private int moneyPopupTimer = 0;
+    private boolean gameOver = false;
+    private final Rectangle restartButton = new Rectangle(GamePanel.WIDTH / 2 - 110, GamePanel.HEIGHT / 2 + 20, 220,
+            60);
 
     public GameState() {
 
@@ -68,6 +71,9 @@ public class GameState {
     // updates the entire game state
     // called once per frame (~60 times per second)
     public void update() {
+        if (gameOver) {
+            return;
+        }
 
         // level class decides to spawn enemies or not
         level.spawnEnemies(enemies, path);
@@ -94,6 +100,9 @@ public class GameState {
                 health = Math.max(0, health - ENEMY_ESCAPE_DAMAGE);
                 enemiesToRemove.add(e);
             }
+        }
+        if (health <= 0) {
+            gameOver = true;
         }
         enemies.removeAll(enemiesToRemove);
 
@@ -123,6 +132,34 @@ public class GameState {
             p.draw(g);
 
         drawHud((Graphics2D) g);
+
+        if (gameOver) {
+            drawGameOverOverlay((Graphics2D) g);
+        }
+    }
+
+    private void drawGameOverOverlay(Graphics2D g2d) {
+        g2d.setColor(new Color(0, 0, 0, 175));
+        g2d.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
+
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 72));
+        String title = "Game Over";
+        FontMetrics titleMetrics = g2d.getFontMetrics();
+        int titleX = (GamePanel.WIDTH - titleMetrics.stringWidth(title)) / 2;
+        g2d.drawString(title, titleX, GamePanel.HEIGHT / 2 - 20);
+
+        g2d.setColor(new Color(40, 155, 95));
+        g2d.fillRoundRect(restartButton.x, restartButton.y, restartButton.width, restartButton.height, 16, 16);
+
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 30));
+        String buttonText = "Restart";
+        FontMetrics buttonMetrics = g2d.getFontMetrics();
+        int textX = restartButton.x + (restartButton.width - buttonMetrics.stringWidth(buttonText)) / 2;
+        int textY = restartButton.y + ((restartButton.height - buttonMetrics.getHeight()) / 2)
+                + buttonMetrics.getAscent();
+        g2d.drawString(buttonText, textX, textY);
     }
 
     private void drawHud(Graphics2D g2d) {
@@ -176,6 +213,42 @@ public class GameState {
             int centerY = tileY * Path.TILE_SIZE + Path.TILE_SIZE / 2;
             towers.add(new Tower(centerX, centerY));
             money -= TOWER_COST;
+        }
+    }
+
+    public void handleMouseClick(int x, int y) {
+        if (gameOver) {
+            if (restartButton.contains(x, y)) {
+                restartGame();
+            }
+            return;
+        }
+
+        placeTower(x, y);
+    }
+
+    private void restartGame() {
+        enemies.clear();
+        towers.clear();
+        projectiles.clear();
+
+        level = new Level();
+        path = new Path();
+        resetTowerTiles();
+
+        health = MAX_HEALTH;
+        money = STARTING_MONEY;
+        moneyPopupTimer = 0;
+        gameOver = false;
+    }
+
+    private void resetTowerTiles() {
+        for (int y = 0; y < Level.TOWER_TILES.length; y++) {
+            for (int x = 0; x < Level.TOWER_TILES[y].length; x++) {
+                if (Level.TOWER_TILES[y][x] != 0) {
+                    Level.TOWER_TILES[y][x] = 14;
+                }
+            }
         }
     }
 

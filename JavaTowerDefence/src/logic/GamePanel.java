@@ -57,7 +57,7 @@ public class GamePanel extends JPanel implements ActionListener, MouseListener {
     // mouse handler
     @Override
     public void mouseClicked(MouseEvent e) {
-        gameState.placeTower(e.getX(), e.getY());
+        gameState.handleMouseClick(e.getX(), e.getY());
     }
 
     public void mousePressed(MouseEvent e) {
