@@ -78,6 +78,10 @@ public class Tower {
     public void draw(Graphics g) {
         g.drawImage(TOWER_SPRITES[currentFrame], (x - WIDTH / 2), (y - HEIGHT / 2) - 15, WIDTH - 5, HEIGHT - 5, null);
     }
+
+    public int getRow() {
+        return y;
+    }
 }
 
 // threads VEERY IMPORTANT FOR EXAM, it useful because it creates new path for

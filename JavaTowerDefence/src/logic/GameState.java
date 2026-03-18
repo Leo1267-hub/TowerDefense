@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class GameState {
 
@@ -130,8 +131,12 @@ public class GameState {
         level.draw(g);
         for (Enemy e : enemies)
             e.draw(g);
+
+        towers.sort(Comparator.comparingInt(Tower::getRow));
+
         for (Tower t : towers)
             t.draw(g);
+
         for (Projectile p : projectiles)
             p.draw(g);
 
