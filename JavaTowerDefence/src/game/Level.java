@@ -38,6 +38,10 @@ public class Level {
         }
     }
 
+    public boolean isWaveFinished() {
+        return spawned >= MAX_ENEMIES;
+    }
+
     // Check if a tower can be placed at the given tile coordinates
     public static boolean canPlaceTower(int tileX, int tileY) {
         // check if it in bounds of the TOWER_TILES array
@@ -48,6 +52,7 @@ public class Level {
                 TOWER_TILES[tileY][tileX] != 14) {
             return false;
         }
+
         TOWER_TILES[tileY][tileX] = 1; // mark tile as occupied
         return true;
 

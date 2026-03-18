@@ -1,6 +1,8 @@
 package logic;
 
 import game.*;
+import ui.EndGameHUD;
+import ui.MenuHUD;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -9,6 +11,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class GameState {
+
+    private enum ScreenState {
+        MENU,
+        PLAYING,
+        GAME_OVER,
+        WIN
+    }
 
     private static final int MAX_HEALTH = 100;
     private static final int STARTING_MONEY = 200;
@@ -32,9 +41,9 @@ public class GameState {
     private int panelX = GamePanel.WIDTH - panelWidth - margin;
     private int panelY = margin;
     private int moneyPopupTimer = 0;
-    private boolean gameOver = false;
-    private final Rectangle restartButton = new Rectangle(GamePanel.WIDTH / 2 - 110, GamePanel.HEIGHT / 2 + 20, 220,
-            60);
+    private ScreenState screenState = ScreenState.MENU;
+    private final MenuHUD menuHUD = new MenuHUD();
+    private final EndGameHUD endGameHUD = new EndGameHUD();
 
     public GameState() {
 
@@ -71,7 +80,7 @@ public class GameState {
     // updates the entire game state
     // called once per frame (~60 times per second)
     public void update() {
-        if (gameOver) {
+        if (screenState != ScreenState.PLAYING) {
             return;
         }
 
@@ -102,9 +111,13 @@ public class GameState {
             }
         }
         if (health <= 0) {
-            gameOver = true;
+            screenState = ScreenState.GAME_OVER;
         }
         enemies.removeAll(enemiesToRemove);
+
+        if (screenState == ScreenState.PLAYING && level.isWaveFinished() && enemies.isEmpty()) {
+            screenState = ScreenState.WIN;
+        }
 
         if (moneyPopupTimer > 0) {
             moneyPopupTimer--;
@@ -131,35 +144,18 @@ public class GameState {
         for (Projectile p : projectiles)
             p.draw(g);
 
-        drawHud((Graphics2D) g);
-
-        if (gameOver) {
-            drawGameOverOverlay((Graphics2D) g);
+        if (screenState == ScreenState.PLAYING || screenState == ScreenState.WIN
+                || screenState == ScreenState.GAME_OVER) {
+            drawHud((Graphics2D) g);
         }
-    }
 
-    private void drawGameOverOverlay(Graphics2D g2d) {
-        g2d.setColor(new Color(0, 0, 0, 175));
-        g2d.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
-
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("SansSerif", Font.BOLD, 72));
-        String title = "Game Over";
-        FontMetrics titleMetrics = g2d.getFontMetrics();
-        int titleX = (GamePanel.WIDTH - titleMetrics.stringWidth(title)) / 2;
-        g2d.drawString(title, titleX, GamePanel.HEIGHT / 2 - 20);
-
-        g2d.setColor(new Color(40, 155, 95));
-        g2d.fillRoundRect(restartButton.x, restartButton.y, restartButton.width, restartButton.height, 16, 16);
-
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("SansSerif", Font.BOLD, 30));
-        String buttonText = "Restart";
-        FontMetrics buttonMetrics = g2d.getFontMetrics();
-        int textX = restartButton.x + (restartButton.width - buttonMetrics.stringWidth(buttonText)) / 2;
-        int textY = restartButton.y + ((restartButton.height - buttonMetrics.getHeight()) / 2)
-                + buttonMetrics.getAscent();
-        g2d.drawString(buttonText, textX, textY);
+        if (screenState == ScreenState.MENU) {
+            menuHUD.draw((Graphics2D) g);
+        } else if (screenState == ScreenState.GAME_OVER) {
+            endGameHUD.draw((Graphics2D) g, false);
+        } else if (screenState == ScreenState.WIN) {
+            endGameHUD.draw((Graphics2D) g, true);
+        }
     }
 
     private void drawHud(Graphics2D g2d) {
@@ -217,14 +213,27 @@ public class GameState {
     }
 
     public void handleMouseClick(int x, int y) {
-        if (gameOver) {
-            if (restartButton.contains(x, y)) {
+        if (screenState == ScreenState.MENU) {
+            if (menuHUD.isStartClicked(x, y)) {
+                startGame();
+            } else if (menuHUD.isExitClicked(x, y)) {
+                System.exit(0);
+            }
+            return;
+        }
+
+        if (screenState == ScreenState.GAME_OVER || screenState == ScreenState.WIN) {
+            if (endGameHUD.isRestartClicked(x, y)) {
                 restartGame();
             }
             return;
         }
 
         placeTower(x, y);
+    }
+
+    private void startGame() {
+        screenState = ScreenState.PLAYING;
     }
 
     private void restartGame() {
@@ -239,7 +248,7 @@ public class GameState {
         health = MAX_HEALTH;
         money = STARTING_MONEY;
         moneyPopupTimer = 0;
-        gameOver = false;
+        screenState = ScreenState.MENU;
     }
 
     private void resetTowerTiles() {
