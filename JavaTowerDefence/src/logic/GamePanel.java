@@ -2,14 +2,15 @@ package logic;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 // GamePanel is responsible for:
 // Game loop (using a Timer to call actionPerformed regularly)
 // Handling mouse input (to place towers)
 // Drawing the game (by overriding paintComponent)
 
-public class GamePanel extends JPanel implements ActionListener, MouseListener {
+public class GamePanel extends JPanel implements ActionListener {
 
     // sets the window size
     public static final int WIDTH = 1280;
@@ -31,7 +32,9 @@ public class GamePanel extends JPanel implements ActionListener, MouseListener {
         // start the game loop
         timer.start();
 
-        addMouseListener(this);
+        MouseHandler mouseHandler = new MouseHandler(gameState);
+        addMouseListener(mouseHandler);
+        addMouseMotionListener(mouseHandler);
     }
 
     // class that has the game loop
@@ -54,21 +57,4 @@ public class GamePanel extends JPanel implements ActionListener, MouseListener {
         gameState.draw(g);
     }
 
-    // mouse handler
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        gameState.handleMouseClick(e.getX(), e.getY());
-    }
-
-    public void mousePressed(MouseEvent e) {
-    }
-
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    public void mouseExited(MouseEvent e) {
-    }
 }

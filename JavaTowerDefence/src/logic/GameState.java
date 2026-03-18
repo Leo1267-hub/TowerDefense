@@ -189,8 +189,22 @@ public class GameState {
         placeTower(x, y);
     }
 
+    public void handleMouseMove(int x, int y) {
+        if (screenState == ScreenState.MENU) {
+            menuHUD.updateHover(x, y);
+            endGameHUD.clearHover();
+        } else if (screenState == ScreenState.GAME_OVER || screenState == ScreenState.WIN) {
+            endGameHUD.updateHover(x, y);
+            menuHUD.clearHover();
+        } else {
+            menuHUD.clearHover();
+            endGameHUD.clearHover();
+        }
+    }
+
     private void startGame() {
         screenState = ScreenState.PLAYING;
+        menuHUD.clearHover();
     }
 
     private void restartGame() {
@@ -205,6 +219,7 @@ public class GameState {
         health = MAX_HEALTH;
         money = STARTING_MONEY;
         moneyPopupTimer = 0;
+        endGameHUD.clearHover();
         screenState = ScreenState.PLAYING;
     }
 

@@ -8,6 +8,7 @@ public class EndGameHUD {
 
     private final Rectangle restartButton = new Rectangle(GamePanel.WIDTH / 2 - 110, GamePanel.HEIGHT / 2 + 20, 220,
             60);
+    private boolean restartHovered;
 
     public void draw(Graphics2D g2d, boolean win) {
         g2d.setColor(new Color(0, 0, 0, 175));
@@ -20,8 +21,13 @@ public class EndGameHUD {
         int titleX = (GamePanel.WIDTH - titleMetrics.stringWidth(title)) / 2;
         g2d.drawString(title, titleX, GamePanel.HEIGHT / 2 - 20);
 
-        g2d.setColor(new Color(40, 155, 95));
+        Color restartColor = restartHovered ? new Color(53, 190, 118) : new Color(40, 155, 95);
+        g2d.setColor(restartColor);
         g2d.fillRoundRect(restartButton.x, restartButton.y, restartButton.width, restartButton.height, 16, 16);
+
+        g2d.setColor(new Color(255, 255, 255, restartHovered ? 230 : 180));
+        g2d.setStroke(new BasicStroke(restartHovered ? 4f : 2f));
+        g2d.drawRoundRect(restartButton.x, restartButton.y, restartButton.width, restartButton.height, 16, 16);
 
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("SansSerif", Font.BOLD, 30));
@@ -35,5 +41,13 @@ public class EndGameHUD {
 
     public boolean isRestartClicked(int x, int y) {
         return restartButton.contains(x, y);
+    }
+
+    public void updateHover(int x, int y) {
+        restartHovered = restartButton.contains(x, y);
+    }
+
+    public void clearHover() {
+        restartHovered = false;
     }
 }
