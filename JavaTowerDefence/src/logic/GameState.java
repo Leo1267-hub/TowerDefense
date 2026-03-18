@@ -3,6 +3,7 @@ package logic;
 import game.*;
 import ui.EndGameHUD;
 import ui.MenuHUD;
+import ui.GameHUD;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -19,11 +20,11 @@ public class GameState {
         WIN
     }
 
-    private static final int MAX_HEALTH = 100;
-    private static final int STARTING_MONEY = 200;
-    private static final int TOWER_COST = 50;
-    private static final int ENEMY_KILL_REWARD = 15;
-    private static final int ENEMY_ESCAPE_DAMAGE = 10;
+    public static final int MAX_HEALTH = 100;
+    public static final int STARTING_MONEY = 200;
+    public static final int TOWER_COST = 50;
+    public static final int ENEMY_KILL_REWARD = 15;
+    public static final int ENEMY_ESCAPE_DAMAGE = 10;
 
     private ArrayList<Enemy> enemies;
     private ArrayList<Tower> towers;
@@ -32,15 +33,10 @@ public class GameState {
     private Path path;
     private Level level;
     private BufferedImage mapImage;
-    private int health;
-    private int money;
+    public static int health;
+    public static int money;
 
-    private int panelWidth = 280;
-    private int panelHeight = 110;
-    private int margin = 20;
-    private int panelX = GamePanel.WIDTH - panelWidth - margin;
-    private int panelY = margin;
-    private int moneyPopupTimer = 0;
+    public static int moneyPopupTimer = 0;
     private ScreenState screenState = ScreenState.MENU;
     private final MenuHUD menuHUD = new MenuHUD();
     private final EndGameHUD endGameHUD = new EndGameHUD();
@@ -60,11 +56,6 @@ public class GameState {
         towers = new ArrayList<>();
         // bullets currently active in the game
         projectiles = new ArrayList<>();
-
-        // Each object:
-        // Updates itself
-        // Draws itself
-        // Knows how to interact with other objects
 
         // Creates the enemy path
         // Where enemies go
@@ -146,7 +137,7 @@ public class GameState {
 
         if (screenState == ScreenState.PLAYING || screenState == ScreenState.WIN
                 || screenState == ScreenState.GAME_OVER) {
-            drawHud((Graphics2D) g);
+            GameHUD.drawHud((Graphics2D) g);
         }
 
         if (screenState == ScreenState.MENU) {
@@ -157,40 +148,6 @@ public class GameState {
             endGameHUD.draw((Graphics2D) g, true);
         }
     }
-
-    private void drawHud(Graphics2D g2d) {
-
-        g2d.setColor(new Color(0, 0, 0, 160));
-        g2d.fillRoundRect(panelX, panelY, panelWidth, panelHeight, 18, 18);
-
-        g2d.setColor(new Color(240, 240, 240));
-        g2d.setFont(new Font("SansSerif", Font.BOLD, 20));
-        g2d.drawString("Money: $" + money, panelX + 16, panelY + 34);
-
-        int barX = panelX + 16;
-        int barY = panelY + 56;
-        int barWidth = panelWidth - 32;
-        int barHeight = 24;
-
-        g2d.setColor(new Color(70, 70, 70));
-        g2d.fillRoundRect(barX, barY, barWidth, barHeight, 12, 12);
-
-        int healthWidth = (int) ((health / (double) MAX_HEALTH) * barWidth);
-        g2d.setColor(new Color(54, 196, 95));
-        g2d.fillRoundRect(barX, barY, healthWidth, barHeight, 12, 12);
-
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("SansSerif", Font.BOLD, 16));
-        g2d.drawString("Health: " + health + "/" + MAX_HEALTH, barX + 8, barY + 18);
-
-        if (moneyPopupTimer > 0) {
-            g2d.setColor(new Color(140, 255, 140));
-            g2d.setFont(new Font("SansSerif", Font.BOLD, 18));
-            g2d.drawString("+" + ENEMY_KILL_REWARD + "$", panelX + 150, panelY + 34);
-        }
-    }
-
-    // INPUT HANDLING
 
     // places a new tower at the specified coordinates if on a valid tile
     public void placeTower(int x, int y) {
@@ -248,7 +205,7 @@ public class GameState {
         health = MAX_HEALTH;
         money = STARTING_MONEY;
         moneyPopupTimer = 0;
-        screenState = ScreenState.MENU;
+        screenState = ScreenState.PLAYING;
     }
 
     private void resetTowerTiles() {
