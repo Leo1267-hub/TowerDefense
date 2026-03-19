@@ -41,5 +41,40 @@ public class GameHUD {
             g2d.setFont(new Font("SansSerif", Font.BOLD, 18));
             g2d.drawString("+" + GameState.ENEMY_KILL_REWARD + "$", panelX + 150, panelY + 34);
         }
+        if (GameState.moneyPopdownTimer > 0) {
+            int amount;
+            g2d.setColor(new Color(255, 140, 140));
+            g2d.setFont(new Font("SansSerif", Font.BOLD, 18));
+            if (GameState.moneyPopupTimer > 0)
+                amount = 200;
+            else
+                amount = 150;
+            g2d.drawString("-" + GameState.TOWER_COST + "$", panelX + amount, panelY + 34);
+        }
+    }
+
+    public static void drawEscapeFlash(Graphics2D g2d, float intensity) {
+        int alpha = Math.max(0, Math.min(180, (int) (180 * intensity)));
+        int thickness = 120;
+
+        Paint oldPaint = g2d.getPaint();
+
+        g2d.setPaint(new GradientPaint(0, 0, new Color(190, 20, 20, alpha), thickness, 0, new Color(190, 20, 20, 0)));
+        g2d.fillRect(0, 0, thickness, GamePanel.HEIGHT);
+
+        g2d.setPaint(
+                new GradientPaint(GamePanel.WIDTH, 0, new Color(190, 20, 20, alpha), GamePanel.WIDTH - thickness, 0,
+                        new Color(190, 20, 20, 0)));
+        g2d.fillRect(GamePanel.WIDTH - thickness, 0, thickness, GamePanel.HEIGHT);
+
+        g2d.setPaint(new GradientPaint(0, 0, new Color(190, 20, 20, alpha), 0, thickness, new Color(190, 20, 20, 0)));
+        g2d.fillRect(0, 0, GamePanel.WIDTH, thickness);
+
+        g2d.setPaint(
+                new GradientPaint(0, GamePanel.HEIGHT, new Color(190, 20, 20, alpha), 0, GamePanel.HEIGHT - thickness,
+                        new Color(190, 20, 20, 0)));
+        g2d.fillRect(0, GamePanel.HEIGHT - thickness, GamePanel.WIDTH, thickness);
+
+        g2d.setPaint(oldPaint);
     }
 }

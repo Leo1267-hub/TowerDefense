@@ -38,6 +38,9 @@ public class GameState {
     public static int money;
 
     public static int moneyPopupTimer = 0;
+    public static int moneyPopdownTimer = 0;
+    private static final int ESCAPE_FLASH_DURATION = 24;
+    private int escapeFlashTimer = 0;
     private ScreenState screenState = ScreenState.MENU;
     private final MenuHUD menuHUD = new MenuHUD();
     private final EndGameHUD endGameHUD = new EndGameHUD();
@@ -99,6 +102,7 @@ public class GameState {
 
             } else if (e.hasEscaped()) {
                 health = Math.max(0, health - ENEMY_ESCAPE_DAMAGE);
+                escapeFlashTimer = ESCAPE_FLASH_DURATION;
                 enemiesToRemove.add(e);
             }
         }
@@ -113,6 +117,14 @@ public class GameState {
 
         if (moneyPopupTimer > 0) {
             moneyPopupTimer--;
+        }
+
+        if (moneyPopdownTimer > 0) {
+            moneyPopdownTimer--;
+        }
+
+        if (escapeFlashTimer > 0) {
+            escapeFlashTimer--;
         }
 
         // remove inactive projectiles
@@ -139,6 +151,11 @@ public class GameState {
 
         for (Projectile p : projectiles)
             p.draw(g);
+
+        if (escapeFlashTimer > 0 && screenState == ScreenState.PLAYING) {
+            float flashIntensity = escapeFlashTimer / (float) ESCAPE_FLASH_DURATION;
+            GameHUD.drawEscapeFlash((Graphics2D) g, flashIntensity);
+        }
 
         if (screenState == ScreenState.PLAYING || screenState == ScreenState.WIN
                 || screenState == ScreenState.GAME_OVER) {
@@ -170,6 +187,7 @@ public class GameState {
             int centerX = tileX * Path.TILE_SIZE + Path.TILE_SIZE;
             int centerY = tileY * Path.TILE_SIZE + Path.TILE_SIZE / 2;
             towers.add(new Tower(centerX, centerY));
+            moneyPopdownTimer = 30;
             money -= TOWER_COST;
         }
     }
@@ -224,6 +242,8 @@ public class GameState {
         health = MAX_HEALTH;
         money = STARTING_MONEY;
         moneyPopupTimer = 0;
+        moneyPopdownTimer = 0;
+        escapeFlashTimer = 0;
         endGameHUD.clearHover();
         screenState = ScreenState.PLAYING;
     }
